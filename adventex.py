@@ -96,6 +96,19 @@ def printvf(text):
         formatted_text += word
     print(formatted_text)
 
+def print_situation(situation):
+    printvf(situation.description)
+    print("1 to {0} or 2 to {1}".format(situation.option1.upper(), situation.option2.upper()))
+    choice = input()
+    is_int = True
+    try:
+        choice = int(choice)
+    except:
+        # input not integer
+        is_int = False
+        pass
+    print("You chose: {0}".format(choice))
+
 game_file = open("game.txt", "r")
 data = game_file.readlines()
 index = 0
@@ -126,8 +139,9 @@ for line in data:
 printvf("Your name is %NAME and you have %LIVES lives.")
 
 for situation in situations:
-    print("Situation ID: " + str(situation.id))
-    print("Situation DESCRIPTION: " + situation.description)
-    print("Situation OPTION1: " + situation.option1)
-    print("Situation OPTION2: " + situation.option2)
+    #print("Situation ID: " + str(situation.id))
+    #print("Situation DESCRIPTION: " + situation.description)
+    #print("Situation OPTION1: " + situation.option1)
+    #print("Situation OPTION2: " + situation.option2)
+    print_situation(situation)
     
