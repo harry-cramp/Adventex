@@ -12,6 +12,11 @@ SITUATION_DESCRIPTION = "DESCRIPTION"
 SITUATION_OPTION_1 = "OPTION1"
 SITUATION_OPTION_2 = "OPTION2"
 
+INSTRUCTION_PRINT = "PRINT"
+INSTRUCTION_INC = "INC"
+INSTRUCTION_DEC = "DEC"
+INSTRUCTION_JUMP = "JUMP"
+
 END_LABEL = "END"
 
 # class to hold situation information
@@ -41,7 +46,7 @@ def build_situation(situation_data):
     logging_opt1_instr = True
     for line in situation_data:
         if loading_instructions and not line.startswith(SITUATION_OPTION_2):
-            instruction = build_instruction(line[1:])
+            instruction = build_instruction(line)
             if logging_opt1_instr == True:
                 option1_instructions.append(instruction)
             else:
@@ -61,6 +66,11 @@ def build_situation(situation_data):
             logging_opt1_instr = False
             loading_instructions = True
     return Situation(event_id, description, option1, option1_instructions, option2, option2_instructions)
+
+def get_situation(jump_id):
+    for situation in situations:
+        if int(situation.id) == int(jump_id):
+            return situation
 
 def build_instruction(data):
     return Instruction(data)
@@ -85,12 +95,40 @@ def process_variables(lines):
         elif label == VARIABLE_LABEL_VALUE:
             variable_store[variable_id] = remove_quotes(components[1])
 
+def increment_variable(variable_id, amount):
+    variable_store[variable_id] = int(variable_store[variable_id]) + amount
+
+def decrement_variable(variable_id, amount):
+    variable_store[variable_id] = int(variable_store[variable_id]) - amount
+
+def process_instruction(instruction):
+    command = instruction.opcode
+    operand = instruction.instruction.replace(command + " ", "")
+    if command == INSTRUCTION_PRINT:
+        printvf(remove_quotes(operand))
+    elif command == INSTRUCTION_INC:
+        elements = operand.split(" ")
+        variable_id = elements[0]
+        value = int(elements[1])
+        increment_variable(variable_id, value)
+    elif command == INSTRUCTION_DEC:
+        elements = operand.split(" ")
+        variable_id = elements[0]
+        value = int(elements[1])
+        decrement_variable(variable_id, value)
+    elif command == INSTRUCTION_JUMP:
+        print_situation(get_situation(operand))
+
+def execute_path(instructions):
+    for instruction in instructions:
+        process_instruction(instruction)
+    
 def printvf(text):
     formatted_text = ""
     for word in text.split():
         if word[0] == '%':
             key = word[1:]
-            word = variable_store[key] + " "
+            word = str(variable_store[key]) + " "
         else:
             word = word + " "
         formatted_text += word
@@ -107,7 +145,12 @@ def print_situation(situation):
         # input not integer
         is_int = False
         pass
-    print("You chose: {0}".format(choice))
+
+    if is_int == True:
+        if choice == 1:
+            execute_path(situation.option1_instr)
+        else:
+            execute_path(situation.option2_instr)
 
 game_file = open("game.txt", "r")
 data = game_file.readlines()
@@ -138,10 +181,5 @@ for line in data:
 
 printvf("Your name is %NAME and you have %LIVES lives.")
 
-for situation in situations:
-    #print("Situation ID: " + str(situation.id))
-    #print("Situation DESCRIPTION: " + situation.description)
-    #print("Situation OPTION1: " + situation.option1)
-    #print("Situation OPTION2: " + situation.option2)
-    print_situation(situation)
+print_situation(situations[0])
     
