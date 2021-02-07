@@ -2,6 +2,8 @@
 variable_store = {}
 
 situations = []
+# instructions to execute when game ends
+end_instr = []
 
 VARIABLE_LABEL_QUERY = "query"
 VARIABLE_LABEL_VALUE = "value"
@@ -118,6 +120,8 @@ def process_instruction(instruction):
         decrement_variable(variable_id, value)
     elif command == INSTRUCTION_JUMP:
         print_situation(get_situation(operand))
+    elif command == END_LABEL:
+        execute_path(end_instr)
 
 def execute_path(instructions):
     for instruction in instructions:
@@ -156,6 +160,7 @@ game_file = open("game.txt", "r")
 data = game_file.readlines()
 index = 0
 is_game_data = False
+is_end_data = False
 situation_data = []
 for line in data:
     line = line.strip()
@@ -175,8 +180,12 @@ for line in data:
                 situation_data = []
         elif line == END_LABEL:
             is_game_data = False
+            is_end_data = True
             continue
         situation_data.append(line)
+    elif is_end_data == True:
+        print("LOAD END DATA " + line)
+        end_instr.append(build_instruction(line))
     index = index + 1
 
 printvf("Your name is %NAME and you have %LIVES lives.")
