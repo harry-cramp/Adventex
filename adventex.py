@@ -52,12 +52,12 @@ def build_situation(situation_data):
         if demand == SITUATION_ID:
             event_id = int(data)
         elif demand == SITUATION_DESCRIPTION:
-            description = data
+            description = remove_quotes(data)
         elif demand == SITUATION_OPTION_1:
-            option1 = data
+            option1 = remove_quotes(data)
             loading_instructions = True
         elif demand == SITUATION_OPTION_2:
-            option2 = data
+            option2 = remove_quotes(data)
             logging_opt1_instr = False
             loading_instructions = True
     return Situation(event_id, description, option1, option1_instructions, option2, option2_instructions)
@@ -69,7 +69,7 @@ def query_variable(query):
     return input(query + " ")
 
 def remove_quotes(text):
-    return text[1:-2]
+    return text.strip().replace('"', '')
 
 def process_variables(lines):
     for line in lines:
