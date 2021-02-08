@@ -5,12 +5,16 @@ situations = []
 # instructions to execute when game ends
 end_instr = []
 
+# Reserved variable names
+RESERVED_VAR_INPUT = "INPUT"
+
 VARIABLE_LABEL_QUERY = "query"
 VARIABLE_LABEL_VALUE = "value"
 
 SITUATION_LABEL = "SITUATION"
 SITUATION_ID = "ID"
 SITUATION_DESCRIPTION = "DESCRIPTION"
+SITUATION_FALLBACK = "FALLBACK"
 SITUATION_OPTION_1 = "OPTION1"
 SITUATION_OPTION_2 = "OPTION2"
 
@@ -23,9 +27,10 @@ END_LABEL = "END"
 
 # class to hold situation information
 class Situation:
-    def __init__(self, id, description, option1, option1_instr, option2, option2_instr):
+    def __init__(self, id, description, fallback, option1, option1_instr, option2, option2_instr):
         self.id = id
         self.description = description
+        self.fallback = fallback
         self.option1 = option1
         self.option1_instr = option1_instr
         self.option2 = option2
@@ -40,6 +45,7 @@ class Instruction:
 def build_situation(situation_data):
     event_id = 0
     description = ""
+    fallback = ""
     option1 = ""
     option1_instructions = []
     option2 = ""
@@ -60,6 +66,8 @@ def build_situation(situation_data):
             event_id = int(data)
         elif demand == SITUATION_DESCRIPTION:
             description = remove_quotes(data)
+        elif demand == SITUATION_FALLBACK:
+            fallback = remove_quotes(data)
         elif demand == SITUATION_OPTION_1:
             option1 = remove_quotes(data)
             loading_instructions = True
@@ -67,7 +75,7 @@ def build_situation(situation_data):
             option2 = remove_quotes(data)
             logging_opt1_instr = False
             loading_instructions = True
-    return Situation(event_id, description, option1, option1_instructions, option2, option2_instructions)
+    return Situation(event_id, description, fallback, option1, option1_instructions, option2, option2_instructions)
 
 def get_situation(jump_id):
     for situation in situations:
@@ -148,6 +156,10 @@ def print_situation(situation):
     except:
         # input not integer
         is_int = False
+        # set reserved variable %INPUT to user's input
+        variable_store[RESERVED_VAR_INPUT] = choice
+        printvf(situation.fallback)
+        print_situation(situation)
         pass
 
     if is_int == True:
