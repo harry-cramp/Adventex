@@ -196,7 +196,6 @@ for line in data:
             continue
         situation_data.append(line)
     elif is_end_data == True:
-        print("LOAD END DATA " + line)
         end_instr.append(build_instruction(line))
     index = index + 1
 
