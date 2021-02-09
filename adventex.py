@@ -86,7 +86,8 @@ def build_instruction(data):
     return Instruction(data)
 
 def query_variable(query):
-    return input(query + " ")
+    printvf(query)
+    return input("")
 
 def remove_quotes(text):
     return text.strip().replace('"', '')
@@ -199,7 +200,6 @@ for line in data:
         end_instr.append(build_instruction(line))
     index = index + 1
 
-printvf("Your name is %NAME and you have %LIVES lives.")
-
+# begin game with first situation
 print_situation(situations[0])
     
