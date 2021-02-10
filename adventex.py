@@ -137,15 +137,9 @@ def execute_path(instructions):
         process_instruction(instruction)
     
 def printvf(text):
-    formatted_text = ""
-    for word in text.split():
-        if word[0] == '%':
-            key = word[1:]
-            word = str(variable_store[key]) + " "
-        else:
-            word = word + " "
-        formatted_text += word
-    print(formatted_text)
+    for variable_id in variable_store:
+        text = text.replace("%" + variable_id, str(variable_store[variable_id]))
+    print(text)
 
 def print_situation(situation):
     printvf(situation.description)
