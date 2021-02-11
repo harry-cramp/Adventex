@@ -1,7 +1,7 @@
 # variable store - maps variables to names
 variable_store = {}
 
-situations = []
+situations = {}
 # instructions to execute when game ends
 end_instr = []
 
@@ -82,9 +82,10 @@ def build_situation(situation_data):
     return Situation(event_id, description, fallback, option1, option1_instructions, option2, option2_instructions)
 
 def get_situation(jump_id):
-    for situation in situations:
-        if int(situation.id) == int(jump_id):
-            return situation
+    return situations[int(jump_id)]
+    #for situation in situations:
+     #   if int(situation.id) == int(jump_id):
+      #      return situation
 
 def build_instruction(data):
     return Instruction(data)
@@ -190,7 +191,8 @@ for line in data:
             if not situation_data:
                 continue
             else:
-                situations.append(build_situation(situation_data))
+                situation = build_situation(situation_data)
+                situations[int(situation.id)] = situation
                 situation_data = []
         elif line == END_LABEL:
             is_game_data = False
