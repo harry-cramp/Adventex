@@ -25,6 +25,10 @@ INSTRUCTION_JUMP = "JUMP"
 
 END_LABEL = "END"
 
+# store reserved variable lables in a list
+reserved_vars = []
+reserved_vars.append(RESERVED_VAR_INPUT)
+
 # class to hold situation information
 class Situation:
     def __init__(self, id, description, fallback, option1, option1_instr, option2, option2_instr):
@@ -98,6 +102,9 @@ def process_variables(lines):
             return
         words = line.split()
         variable_id = words[0]
+        if variable_id in reserved_vars:
+            raise Exception("ERROR: VARIABLE \"{0}\" RESERVED FOR SYSTEM".format(variable_id))
+            continue
         variable_value = line.partition(' ')[2]
         components = variable_value.split('=')
         label = components[0]
